@@ -6,72 +6,190 @@ date: 2020-07-30
 
 ## Question Generation
 
-As someone who has both taught English as a foreign language and has tried learning languages as a student, I think that the internet is a great resource for reading material in your target language. However, one difficulty when attempting to study using material you find online is that it's not always easy to test your understanding. In order to get some feedback, you either have to find a teacher who will quiz you, or instead use a textbook which has some pre-written questions and answers. But a teacher is not always on-hand, and using textbooks signficantly limits the range of reading material you can use.
+As someone who has both taught English as a foreign language and has tried learning languages as a student, I know that it's important to find interesting things to read when practicing reading comprehension. The internet is of course a great source of material. However, one difficulty when attempting to study using material you find online is that it's not always easy to test your understanding. In order to get some feedback, you either have to find a teacher who will quiz you, or instead use a textbook which has some pre-written questions and answers. But a teacher is not always on-hand, and using textbooks signficantly limits the range of reading material you can use.
 
-The original goal of this project was to allow independent learners to test themselves on a set of questions about any text that they choose to read. This means that a learner can pick texts that are about topics they find interesting, which will motivate them to study more. In order to achieve this, I decided to train a neural network to generate questions. Ideally, I would like to have done this in one of my target languages (Japanese or Bulgarian), but I decided it would be simplest and most effective to use English to begin with due to the availablity of large datasets in English.
+The original goal of this project was to create a system to allow independent learners to test themselves on a set of questions about any text that they choose to read. This means that a learner would be able to pick texts that are about topics they find interesting, which will motivate them to study more. In order to achieve this, I decided to train a neural network to generate questions. Ideally, I would like to have done this in one of my target languages (Japanese or Bulgarian), but I decided it would be simplest and most effective to use English to begin with due to the availablity of large datasets in English, and because it would be easiest for me to evaluate the quality of outputs in my native language.
 
-Question-Generation (QG) is an area of Natural Language Processing (NLP) which involves language generation. This distinguishes it from language comprehension tasks like named entity recognition, sentiment analysis, or extractive question answering. At a basic level, QG is a type of language modeling, which means assigning conditional probabilities to a sequence of words or tokens. This means that QG is similar to abstractive summarisation and question answering tasks.
+Question-Generation (QG) is an area of Natural Language Processing (NLP) which involves language generation. This distinguishes it from language comprehension tasks like named entity recognition, sentiment analysis, or extractive question answering. At a basic level, QG is a type of language modeling, which means assigning conditional probabilities to a sequence of words or tokens. This means that QG is similar to other NLP tasks like abstractive summarisation or sentence completion.
 
-Some research has been done into QG, but it appears to be less popular than some other areas such as QA. Because of this, there aren't many resources such as public datasets or benchmarks specifically for QG. However, if we think of QG as a reversed QA task, then we can simply use QA datasets with the input fields and target fields reversed. This is how some previous research into QG has been done.
+Some research has been done into QG, but it appears to be less popular than some other areas such as Question Answering (QA). We can easily see this by comparing the amount of [QG papers](https://paperswithcode.com/task/question-generation) on [paperswithcode.com](https://paperswithcode.com/) with the number of [QA papers](https://paperswithcode.com/task/question-answering). Because of this, there aren't many resources such as public datasets or benchmarks specifically for QG. However, if we think of QG as a reversed QA task, then we can simply use QA datasets with the input fields and target fields reversed. This is how some previous research into QG has been done.
 
 ## Gathering a Dataset
 
-In order to train a QG model, I needed to get hold of some question and answer data. Luckily, there are a large number of public QA datasets. In the end, I decided to use data from SQuAD, CoQA, and MSMARCO.
+In order to train a QG model, I needed to get hold of some question and answer data. Luckily, there are a large number of [public QA datasets](http://nlpprogress.com/english/question_answering.html). In the end, I decided to use data from SQuAD, CoQA, and MSMARCO.
 
-SQuAD is a dataset containing reading comprehension questions and answers relating to Wikipedia articles. The questions are exactly in the style that I wanted my model to generate. I used SQuAD 2.0, which contains some unanswerable questions. I didn't want my model to generate unanswerable questions so I filtered those out.
+[SQuAD](https://rajpurkar.github.io/SQuAD-explorer/) is a dataset containing reading comprehension questions and answers relating to Wikipedia articles. The questions are exactly in the style that I wanted my model to generate. I used SQuAD 2.0, which contains some unanswerable questions. I didn't want my model to generate unanswerable questions so I filtered those out.
 
-CoQA is a more conversational-style QA dataset. It contains sets of questions and answers generated by people having conversations about a text. This dataset contains lots of good questions to learn from, but due to the conversational-style of the questions, some of them were not usable in my case. This is because some questions contain references to things previously said in the conversation. This leads to questions which don't contain enough context for a reading comprehension format. For example "who was he?": we can't answer this question unless we know who "he" refers to. Another example is "and what else?": this question makes no sense if we haven't already started listing things.
+[RACE](http://www.cs.cmu.edu/~glai1/data/race/) is a dataset collected from English exams for Chinese middle school and high school students. The questions all relate to a passges of text making it suitable for my project. Unfortunately some of the questions are Cloze-style (fill-the-blank) rather than actual question sentences, so I filtered those out. Some questions also have multiple-choice answers, so I dropped the incorrect answers and just kept the correct answer corresponding to each question.
 
-MSMARCO is a dataset containing questions from Bing searches and corresponding answers with supporting texts. This dataset also contains lots of good questions, but many of them are not in full grammatical questio sentences. This is because people typing questions into a search engine only really need to type some key words rather than a full grammatical question. In order to resolve this, I filtered the dataset to only include examples which start with a list of possible question words; for example "who...?" or "does...?" Even some of these turned out to be not real question sentences though. People often type phrases like "how to bake a cake" into a search engine. In this case, I replaced the "how to" with "how do you" creating the grammatical question sentence "How do you bake a cake?"
+[CoQA](https://stanfordnlp.github.io/coqa/) is a more conversational-style QA dataset. It contains sets of questions and answers generated by people having conversations about a text. This dataset contains lots of good questions to learn from, but due to the conversational-style of the questions, some of them were not usable in my case. This is because some questions contain references to things previously said in the conversation. This leads to questions which don't contain enough context for a reading comprehension format. For example "who was he?": we can't answer this question unless we know who "he" refers to. Another example is "and what else?": this question makes no sense if we haven't previously started listing things.
 
-After filtering the datasets, I concatenated the answer and context fields into the format of "answer: <answer text> context: <context text>". These can then be encoded and fed into a neural network. The question field was kept as a label for calculating loss during training. The final dataset contained about 250,000 examples.
+[MSMARCO](https://microsoft.github.io/msmarco/) is a dataset containing questions from Bing searches and corresponding answers with supporting texts. This dataset also contains lots of good questions, but many of them are not in full grammatical question sentences. This is because people typing questions into a search engine only really need to type some key words rather than a full grammatical question. In order to resolve this, I filtered the dataset to only include examples which start with a list of possible question words; for example "who...?" or "does...?" Even some of these turned out to be not real question sentences though. People often type phrases like "how to bake a cake" into a search engine. In this case, I replaced the "how to" with "how do you" creating the grammatical question sentence "How do you bake a cake?"
+
+After filtering the datasets, I concatenated the answer and context fields into the format of `answer: <answer text> context: <context text>`. Once concatenated the data could then be encoded and fed into a neural network. The question field was kept as a label for calculating loss during training. The final dataset contained about 250,000 examples taken from the 4 datasets mentioned.
 
 ## Defining a Model and Training It
 
-The vast majority of state-of-the-art NLP systems are based on the Transformer architecture these days. After reading about several different architectures, I settled on Google's T5 architecture. The concept behind T5 is reframing all NLP tasks as sequence-to-sequence tasks. For example, for summarisation, the model takes the text to be summarised as an input sequence, and outputs the summary as a sequence. For sentiment analysis, the model takes the text to be analysed as an input sequence, and outputs a sequence which states the sentiment of the text. This is useful because although the model wasn't designed or pretrained with the goal of QG in mind, it can be easily repurposed for QG: we can simply use the answer and context as an input, and train the model to give us a question as the output sequence.
+The vast majority of modern NLP systems are based on the Transformer architecture introduced in [Attention Is All You Need](https://arxiv.org/abs/1706.03762). These days there is a large variety of different architectures. After reading about several recent architectures, I settled on Google's T5 model, which was introduced in [Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer](https://arxiv.org/abs/1910.10683). The basic idea behind T5 is reframing all NLP tasks as sequence-to-sequence tasks. For example, for summarisation, the model takes the text to be summarised as an input sequence, and outputs the summary as a sequence. For sentiment analysis, the model takes the text to be analysed as an input sequence, and outputs a sequence which states the sentiment of the text. This is useful because although the model wasn't designed or pretrained with the goal of QG in mind, it can be easily repurposed for QG: we can simply use the answer and context as an input, and train the model to give us a question as the output sequence.
 
-The HuggingFace Transformers library allows us to use a wide range of state-of-the-art transformer models, even including pretrained weights. This made it easy to load a pretrained T5-base model and set it up for training with my QG dataset.
+[The HuggingFace Transformers library](https://github.com/huggingface/transformers) allows us to use a wide range of state-of-the-art transformer models, even allowing us to load pretrained weights. This made it easy to load a pretrained [T5-base](https://huggingface.co/t5-base) model and set it up for training with my QG dataset. We can easily load a pretrained model and tokenizer with 3 lines of code like this:
+```
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-I split the training data into 85% training set and 15% validation set. I trained the model for 20 epochs over the dataset using a learning rate of 0.001 (which was the learning rate used for fine-tuning in the T5 paper).
+tokenizer = AutoTokenizer.from_pretrained("t5-base")
+model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
+```
+This model also includes a loss function, making training very simple:
+```
+input_text = # concatenated answer and context here
+encoded_input = tokenizer(input_text)
+outputs = model(
+  input_ids=encoded_input['input_ids'],
+  attention_mask=encoded_input['attention_mask'],
+  lm_labels=masked_labels)
+```
+`masked_labels` here refers to our encoded target (question) sequence with any padding replaced with the value -100. This indicates to T5 that it should ignore that part of the target when calculating loss. If we don't do this then the loss values would probably be really low as we'd be counting all the padding in the input and output sequences as a correct prediction! I generated the label mask like this:
+```
+def mask_label_padding(labels):
+    MASK_ID = -100
+    labels[labels==tokenizer.pad_token_id] = MASK_ID
+    return labels
+```
+When we feed an input into this model, the loss is calculated automatically too! So after calling `model()`, we get the loss and the model's predictions:
+```
+loss, prediction_scores = outputs[:2]
+```
+I split the training data into 85% training set and 15% validation set. I trained the model for 20 epochs over the dataset using a learning rate of 0.001 (which was the learning rate used for fine-tuning in the T5 paper). I trained the model on Google Colab, so due to GPU memory limitations, I was only able to use a batch size of 4. This meant that training took about a week! I have Google Colab Pro, but even then the session times out every 24 hours, so it was necessary to regularly save the model and to keep reloading.
+
+The code from the training notebook can be found [on my GitHub](https://github.com/iarfmoose/question_generator/blob/master/training/qg_training.ipynb).
 
 ## Evaluating Questions
 
-I was initially worried that the model might inconsistently create grammatical question sentences. This would be a problem since my original goal was for language learners, who need correct examples in order to learn from. Any incorrect sentences might confuse or re-enforce bad habits. However, when I tested the model on some sample texts, I found that the grammar was mostly consistent. 
+I was initially worried that the model might inconsistently create grammatical question sentences. This would be a problem since my original goal was for language learners, who need correct examples to learn from. Any incorrect sentences might cause confusion or re-enforce bad habits. However, when I tested the model on some sample texts, I found that the grammar was mostly consistent. 
 
 On the other hand, I noticed that the model would sometimes generate questions with either no relevance to the answer, or no relevance to the context. The latter were particularly common. An example of this is a question generated from an article about some news relating to Hong Kong and big tech companies. Instead of asking about what happened in the story, the model simply generated the question "what is Facebook?" While this question is grammatically correct and answerable, it is not a reading comprehension question relating to the text, because the text did not contain an explanation of what Facebook is.
 
-Another issue was that some generated questions which were tautalogical or contained the answer within the question. For example, from a text about some events happening in the US, the model generated "Q: Where is Georgia? A: Georgia". This is both irrelevant, because the article didn't explain where Georgia is, and obviously redundant, because the answer doesn't add anything that we didn't already know from the question.
+Another issue was that the model generated some questions which were tautological or contained the answer within the question. For example, from a text about some events happening in the US, the model generated "Q: Where is Georgia? A: Georgia". This is both irrelevant, because the article didn't explain where Georgia is, and obviously redundant, because the answer doesn't add anything that we didn't already know from the question.
 
 To deal with these issues, I decided to train another model which would evaluate the generated questions and answers. I decided to use a pretrained version of BERT for this task. I chose BERT because one of its pretraining objectives is Next Sentence Prediction (NSP). NSP involves taking two sentences, and predicting whether or not the second sentence follows the first one or not. 
 
-For my project, I repurposed th NSP objective by setting the first sentence as a question and the second sentence as the answer to the question. To train the model, I reused the dataset from the question generator, but removed the context. During training, 50% of the time the model would be given the correct QA pair, but in the other 50% of the time, the answer would be corrupted. I defined two corruption operations: the first one was to replace the answer with another random irrelevant answer from the dataset, and the second was to take a named entity from the question, and copy into the answer. The training objective was then to predict whether the answer had been corrupted or not.
+For my project, I repurposed the NSP objective by setting the first sentence as a question and the second sentence as the answer to the question. I used the same `[CLS]` and `[SEP]` tokens as were used in pretraining.
+```
+# BERT pretraining:
+"[CLS] <first sentence> [SEP] <second sentence> [SEP]"
+
+# QA evaluator fine-tuning:
+"[CLS] <question> [SEP] <answer> [SEP]"
+```
+To fine-tune the model, I reused the dataset from the question generator, but removed the context. During training, 50% of the time the model would be given the correct QA pair, but in the other 50% of the time, the answer would be corrupted. I defined two corruption operations: the first one was to replace the answer with another random irrelevant answer from the dataset, and the second was to take a named entity from the question, and copy into the answer. The training objective was then to predict whether the answer had been corrupted or not.
 
 Before fine-tuning on this objective, the pretrained BERT model was only able to achieve 55% on the validation set, which isn't much better than a random guess. But after several epochs it was able to get over 90% which, while not perfect, I decided was good enough to filter out some of the bad QA pairs.
 
+The code for the QA evaluator training can be found [here](https://github.com/iarfmoose/question_generator/blob/master/training/qa_evaluator_training.ipynb).
+
 ## The Final System Pipeline
 
-So now the system contained two models: the first of which takes answers and generates questions, and the second of which evaluates whether or not those QA pairs are valid or not. An earlier version of the system also included a third model which summarised the text in order to extract the best sentences to use as answers to feed into the QG model. But I found this to be overall too much filtering; both filtering sentences out before question generation, and filtering QA pairs out after generation. The result was that the model was only able to output a very small number of questions about each article.
+So now the system contained two models: the first of which takes answers and generates questions, and the second of which evaluates whether or not those QA pairs are valid or not. An earlier version of the system also included a third model which summarised the text in order to extract the best sentences to use as answers to feed into the QG model. But I found this to be overall too much filtering; both filtering sentences before question generation, and filtering QA pairs after generation. The result was that the model was only able to output a very small number of questions about each article.
 
 As a result, I decided to cut the summarisation model. This enabled me to feed a larger number of candidate answers into the QG model, giving the evaluator more QA pairs to sift through.
 
 The final system splits the text into sentences to be used as candidate answers. Each candidate answer is then concatenated with the text, encoded, and passed into the QG model. The outputted question is then concatenated with its corresponding answer and passed to the QA evaluator model. The evaluator outputs a score predicting how likely it is that the QA pair is valid. The QA pairs are then ordered by their evaluation score, and only the top N pairs are presented to the end-user.
 
+The code for this is available [here](https://github.com/iarfmoose/question_generator/blob/master/questiongenerator.py).
+
 # Multiple-Choice Questions
 
 One addition to this system is multiple-choice questions. Multiple choice questions are great for quick tests or for lowering the difficulty of a test, since the student only needs to pick an answer from a predetermined set of answers. Naively, given a question and answer, we could just add random alternative phrases from the text to serve as options. This usually results in incredibly easy questions though, because only the correct answer has any relevance to the question being asked.
 
-In order to make multiple-choice answers more difficult to distinguish between, we can use Named Entity Recognition (NER). In my system, this was done using spaCy's built-in NER. The entities are extracted from the text and used as candidate answers in the QG model. The alternative answers are then selected from answers of the same entity type. For example, given the QA pair "Q: Who is the president of the US? A: Donald Trump", we can identify "Donald Trump" as an entity of type PERSON, and then search the text for others of the same type. The final question will then present the user with 4 people's names, rather than 1 person's name and 3 random phrases. This is of course only possible if there are 3 other people mentioned in the text!
+In order to make multiple-choice answers more difficult to distinguish between, we can use Named Entity Recognition (NER). In my system, this was done using [spaCy's built-in NER](https://spacy.io/usage/linguistic-features#named-entities). The entities are extracted from the text and used as candidate answers in the QG model. The alternative answers are then selected from answers of the same entity type. For example, given the following QA pair:
 
-My final system allows the user to choose between full-sentence answers, multiple-choice answers, or a mix of both. I've found that the full-sentence QA pairs tend to be of better quality. This is likely because the training data mostly consisted of full-sentence answers. The QA evaluator model agrees, and so when a mix of both question styles is selected, the output tends to include mostly full-sentence QA pairs (as they were ranked higher than the multiple-choice ones).
+> Q: Which city has the largest population in the world?
+>
+> A: Tokyo.
+
+We can identify "Tokyo" as an entity of type `GPE` (for GeoPolitical Entity), and then search the text for others of the same type. The final question will then present the user with 4 geopolotical entities (e.g. other cities, or countries), rather than 1 city and 3 completely random phrases. This is of course only possible if there are 3 other locations mentioned in the text!
+
+My final system allows the user to choose between full-sentence answers, multiple-choice answers, or a mix of both. I've found that the full-sentence QA pairs tend to be of better quality. This is likely because the training data mostly consisted of full-sentence answers. The QA evaluator model agrees with me, and so when a mix of both question styles is selected, the output tends to include mostly full-sentence QA pairs (as they were ranked higher than the multiple-choice ones).
+
+# Example
+
+A full example notebook can be found [here](https://github.com/iarfmoose/question_generator/blob/master/examples/question_generation_example.ipynb). It should be possible to run this notebook in Google Colab and generate questions from any text file you like.
+
+Here's an example of some generated questions from a BBC article about a new Netflix show about arranged marriages in India. We can instantiate the `QuestionGenerator` and use it like this:
+```
+from questiongenerator import QuestionGenerator
+from questiongenerator import print_qa
+
+qg = QuestionGenerator()
+
+article = # read in the article text from a source file
+
+qa_list = qg.generate(
+    article, 
+    num_questions=10, 
+    answer_style='all'
+)
+
+print_qa(qa_list)
+```
+Initialising the Question Generator will automatically initialise the QA Evaluator too, and questions will be automatically ranked unless `use_qa_eval=False`. This is the output:
+```
+Generating questions...
+
+Evaluating QA pairs...
+
+1) Q: What would have been offended if Sima Aunty spoke about?
+   A: In fact, I would have been offended if Sima Aunty was woke and spoke about choice, body positivity and clean energy during matchmaking. 
+
+2) Q: What does she think of Indian Matchmaking?
+   A: " Ms Vetticad describes Indian Matchmaking as "occasionally insightful" and says "parts of it are hilarious because Ms Taparia's clients are such characters and she herself is so unaware of her own regressive mindset". 
+
+3) Q: What do parents do to find a suitable match?
+   A: Parents also trawl through matrimonial columns in newspapers to find a suitable match for their children. 
+
+4) Q: In what country does Sima taparia try to find suitable matches for her wealthy clients?
+   A: 1. Sima Aunty 
+      2. US (correct)
+      3. Delhi 
+      4. Netflix 
+
+5) Q: What is the reason why she is being called out?
+   A: No wonder, then, that critics have called her out on social media for promoting sexism, and memes and jokes have been shared about "Sima aunty" and her "picky" clients. 
+
+6) Q: who describes Indian Matchmaking as "occasionally insightful"?
+   A: 1. Kiran Lamba Jha 
+      2. Sima Taparia 
+      3. Anna MM Vetticad 
+      4. Ms Taparia's (correct)
+
+7) Q: In what country does Sima taparia try to find suitable matches?
+   A: 1. Netflix 
+      2. Delhi 
+      3. US 
+      4. India (correct)
+
+8) Q: What is the story's true merit?
+   A: And, as writer Devaiah Bopanna points out in an Instagram post, that is where its true merit lies. 
+
+9) Q: What does Ms Vetticad think of Indian Matchmaking?
+   A: But an absence of caveats, she says, makes it "problematic". 
+
+10) Q: Who is the role of matchmaker?
+    A: Traditionally, matchmaking has been the job of family priests, relatives and neighbourhood aunties. 
+```
+
+Most of the questions are reasonable, but there are a few awkward examples here. The first question doesn't really make sense, and should say something like "What would have been offensive for Sima Aunty to speak about?" Question #6 also shows a problem with the multiple choice answers. The multiple-choice answer system does filter out duplicate entities, but not variations of the same name. "Ms Taparia's" and "Sima Taparia" are considered two separate `PERSON` entities even though they refer to the same person. Question #8 gives us an example of a valid, if vague, question. Unfortunately the example answer here doesn't actually answer the question being asked. The QA Evaluator doesn't seem to have picked up on this either.
+
+We could solve the issue from question #6 by improving the system's ability to recognise variations of the same entity name. We could also filter out question #8 for being irrelavent by training the QA Evaluator more robustly. But I don't think it's clear how we could solve the problem of question #1 without training a better QG model.
 
 ## Applications of the System
 
-As stated, the original goal of this project was to make a system for independent language learners to generate questions to test themselves with. But I think there are some other possible applicatons of this sytem too. Reading comprehension tests are also performed in native-English classes to test students' reading abilities. Teachers could potentially use a system like this to generate some questions about an exerpt from a book, a poem, or some other piece of text for their class. Another potential application is in generating QA data for training or evaluating models on QA tasks. One could potentially use this kind of system for data-augmentation, or perhaps generating a whole dataset from scratch.
+As stated, the original goal of this project was to make a system for independent language learners to generate questions to test themselves with. But I think there are some other possible applicatons of this sytem too. Tests like this are also performed in other types of classes to test students' reading memorisation abilities. Teachers could potentially use a system like this to generate some questions about an exerpt from a book, a poem, or some other piece of text for their class. Another potential application is in generating QA data for training or evaluating models on QA tasks. One could potentially use this kind of system for data-augmentation, or perhaps generating a whole dataset from scratch.
 
 ## Unexplored Directions
 
-One challenge I haven't tried to tackle is automatic evaluation of user inputs in the case of full-sentence answers. This is an issue because the user could potentially type a variety of answers, all with the same meaning and truth-value, but with different words and syntax. One simple way to deal with this would be to ask the user to select a sentence from the text to use as an answer rather than typing the answer themselves. A much cooler solution would be to include some kind of Machine Learning system which evaluated whether the user's input is semantically equivalent to the correct answer or not.
+One challenge I haven't tried to tackle is automatic evaluation of user inputs in the case of full-sentence answers. This is an issue because the user could potentially type a variety of answers, all with the same meaning and truth-value, but with different words and syntax. One simple way to deal with this would be to ask the user to select a sentence from the text to use as an answer rather than typing the answer themselves. A much cooler solution would be to include some kind of machine learning system which evaluated whether the user's input is semantically equivalent to the correct answer or not.
 
-Another unexplored idea is question difficulty. The model is capable of asking very simple questions which only require a quick scan of the text to find a name, date, or location. But it's also capable of asking more complex questions about people opinions or the causes of events. A nice feature would be something that can assign a difficulty value to a question. This would allow us to filter by questions by difficulty level depending on the user.
+Another unexplored idea is question difficulty. The model is capable of asking very simple questions which only require a quick scan of the text to find a name, date, or location. But it's also capable of asking more complex questions about people opinions or the causes of events. A nice feature would be something that can assign a difficulty value to a question. This would allow us to filter questions by difficulty-level depending on the user.
 
 Finally, it would be cool to implement the same kind of QG system for other languages. I'd like to have something like this for Japanese, because I'm sick of all of the textbooks that I have.
