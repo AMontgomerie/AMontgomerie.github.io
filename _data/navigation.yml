@@ -1,6 +1,6 @@
 - title: Home
   url: /
 - title: Contact
-  url: /contact.html
+  url: /docs/contact.md
 - title: Blog
-  url: /blog.html
+  url: /docs/blog.html
