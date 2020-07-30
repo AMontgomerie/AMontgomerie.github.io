@@ -60,7 +60,7 @@ When we feed an input into this model, the loss is calculated automatically too!
 ```python
 loss, prediction_scores = outputs[:2]
 ```
-I split the training data into 85% training set and 15% validation set. I trained the model for 20 epochs over the dataset using a learning rate of 0.001 (which was the learning rate used for fine-tuning in the T5 paper). I trained the model on Google Colab, so due to GPU memory limitations, I was only able to use a batch size of 4. This meant that training took about a week! I have Google Colab Pro, but even then the session times out every 24 hours, so it was necessary to regularly save the model and to keep reloading.
+I split the training data into 85% training set and 15% validation set. I trained the model for 20 epochs over the dataset using a learning rate of 0.001 (which was the learning rate used for fine-tuning in the T5 paper). Because T5-base is quite a large model, and because I was working with limited GPU memory, I was only able to use a batch size of 4. This meant that training took about a week! In addition, because I was training on Google Colab, the session timed out every 24 hours meaning I had to regularly save and reload.
 
 The code from the training notebook can be found [on my GitHub](https://github.com/iarfmoose/question_generator/blob/master/training/qg_training.ipynb).
 
