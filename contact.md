@@ -1,7 +1,9 @@
 ---
+
 layout: page
 title: "Contact"
 permalink: /contact/
+
 ---
 
 email: adam.montgomerie971@gmail.com
