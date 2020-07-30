@@ -16,7 +16,7 @@ Some research has been done into QG, but it appears to be less popular than some
 
 ## Gathering a Dataset
 
-In order to train a QG model, I needed to get hold of some question and answer data. Luckily, there are a large number of [public QA datasets](http://nlpprogress.com/english/question_answering.html). In the end, I decided to use data from SQuAD, CoQA, and MSMARCO.
+In order to train a QG model, I needed to get hold of some question and answer data. Luckily, there are a large number of [public QA datasets](http://nlpprogress.com/english/question_answering.html). In the end, I decided to use data from SQuAD, RACE, CoQA, and MSMARCO.
 
 [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/) is a dataset containing reading comprehension questions and answers relating to Wikipedia articles. The questions are exactly in the style that I wanted my model to generate. I used SQuAD 2.0, which contains some unanswerable questions. I didn't want my model to generate unanswerable questions so I filtered those out.
 
