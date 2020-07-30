@@ -3,6 +3,9 @@ layout: default
 title: "Generating Questions Using Transformers"
 date: 2020-07-30
 ---
+
+{{ post.title }}
+
 As someone who has both taught English as a foreign language and has tried learning languages as a student, I know that it's important to find interesting things to read when practicing reading comprehension. The internet is of course a great source of material. However, one difficulty when attempting to study using material you find online is that it's not always easy to test your understanding. In order to get some feedback, you either have to find a teacher who will quiz you, or instead use a textbook which has some pre-written questions and answers. But a teacher is not always on-hand, and using textbooks signficantly limits the range of reading material you can use.
 
 The original goal of this project was to create a system to allow independent learners to test themselves on a set of questions about any text that they choose to read. This means that a learner would be able to pick texts that are about topics they find interesting, which will motivate them to study more. In order to achieve this, I decided to train a neural network to generate questions. Ideally, I would like to have done this in one of my target languages (Japanese or Bulgarian), but I decided it would be simplest and most effective to use English to begin with due to the availablity of large datasets in English, and because it would be easiest for me to evaluate the quality of outputs in my native language.
