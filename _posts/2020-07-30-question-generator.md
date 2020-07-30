@@ -33,14 +33,14 @@ After filtering the datasets, I concatenated the answer and context fields into 
 The vast majority of modern NLP systems are based on the Transformer architecture introduced in [Attention Is All You Need](https://arxiv.org/abs/1706.03762). These days there is a large variety of different architectures. After reading about several recent architectures, I settled on Google's T5 model, which was introduced in [Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer](https://arxiv.org/abs/1910.10683). The basic idea behind T5 is reframing all NLP tasks as sequence-to-sequence tasks. For example, for summarisation, the model takes the text to be summarised as an input sequence, and outputs the summary as a sequence. For sentiment analysis, the model takes the text to be analysed as an input sequence, and outputs a sequence which states the sentiment of the text. This is useful because although the model wasn't designed or pretrained with the goal of QG in mind, it can be easily repurposed for QG: we can simply use the answer and context as an input, and train the model to give us a question as the output sequence.
 
 [The HuggingFace Transformers library](https://github.com/huggingface/transformers) allows us to use a wide range of state-of-the-art transformer models, even allowing us to load pretrained weights. This made it easy to load a pretrained [T5-base](https://huggingface.co/t5-base) model and set it up for training with my QG dataset. We can easily load a pretrained model and tokenizer with 3 lines of code like this:
-```
+```python
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 tokenizer = AutoTokenizer.from_pretrained("t5-base")
 model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 ```
 This model also includes a loss function, making training very simple:
-```
+```python
 input_text = # concatenated answer and context here
 encoded_input = tokenizer(input_text)
 outputs = model(
@@ -49,14 +49,14 @@ outputs = model(
   lm_labels=masked_labels)
 ```
 `masked_labels` here refers to our encoded target (question) sequence with any padding replaced with the value -100. This indicates to T5 that it should ignore that part of the target when calculating loss. If we don't do this then the loss values would probably be really low as we'd be counting all the padding in the input and output sequences as a correct prediction! I generated the label mask like this:
-```
+```python
 def mask_label_padding(labels):
     MASK_ID = -100
     labels[labels==tokenizer.pad_token_id] = MASK_ID
     return labels
 ```
 When we feed an input into this model, the loss is calculated automatically too! So after calling `model()`, we get the loss and the model's predictions:
-```
+```python
 loss, prediction_scores = outputs[:2]
 ```
 I split the training data into 85% training set and 15% validation set. I trained the model for 20 epochs over the dataset using a learning rate of 0.001 (which was the learning rate used for fine-tuning in the T5 paper). I trained the model on Google Colab, so due to GPU memory limitations, I was only able to use a batch size of 4. This meant that training took about a week! I have Google Colab Pro, but even then the session times out every 24 hours, so it was necessary to regularly save the model and to keep reloading.
@@ -74,7 +74,7 @@ Another issue was that the model generated some questions which were tautologica
 To deal with these issues, I decided to train another model which would evaluate the generated questions and answers. I decided to use a pretrained version of BERT for this task. I chose BERT because one of its pretraining objectives is Next Sentence Prediction (NSP). NSP involves taking two sentences, and predicting whether or not the second sentence follows the first one or not. 
 
 For my project, I repurposed the NSP objective by setting the first sentence as a question and the second sentence as the answer to the question. I used the same `[CLS]` and `[SEP]` tokens as were used in pretraining.
-```
+```python
 # BERT pretraining:
 "[CLS] <first sentence> [SEP] <second sentence> [SEP]"
 
@@ -116,7 +116,7 @@ My final system allows the user to choose between full-sentence answers, multipl
 A full example notebook can be found [here](https://github.com/iarfmoose/question_generator/blob/master/examples/question_generation_example.ipynb). It should be possible to run this notebook in Google Colab and generate questions from any text file you like.
 
 Here's an example of some generated questions from [a BBC article about a new Netflix show about arranged marriages in India](https://www.bbc.com/news/world-asia-india-53499195). We can instantiate the `QuestionGenerator` and use it like this:
-```
+```python
 from questiongenerator import QuestionGenerator
 from questiongenerator import print_qa
 
