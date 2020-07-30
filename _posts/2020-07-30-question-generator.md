@@ -202,3 +202,7 @@ One challenge I haven't tried to tackle is automatic evaluation of user inputs i
 Another unexplored idea is question difficulty. The model is capable of asking very simple questions which only require a quick scan of the text to find a name, date, or location. But it's also capable of asking more complex questions about people opinions or the causes of events. A nice feature would be something that can assign a difficulty value to a question. This would allow us to filter questions by difficulty-level depending on the user.
 
 Finally, it would be cool to implement the same kind of QG system for other languages. I'd like to have something like this for Japanese, because I'm sick of all of the textbooks that I have.
+
+## Another Question Generation Project
+
+When I was in the process of uploading my code and writing this blog, I came across [this GitHub repo](https://github.com/patil-suraj/question_generation) by Suraj Patil, which also uses T5 for question generation! They also appear to have fine-tuned using data from SQuAD. One interesting difference from this project is their use of T5 for multiple-tasks; in particular for answer extraction from the target text, and for QA as well as QG. They also go into more detail about how the models perform on various metrics like BLEU and ROUGE.
