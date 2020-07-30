@@ -115,7 +115,7 @@ My final system allows the user to choose between full-sentence answers, multipl
 
 A full example notebook can be found [here](https://github.com/iarfmoose/question_generator/blob/master/examples/question_generation_example.ipynb). It should be possible to run this notebook in Google Colab and generate questions from any text file you like.
 
-Here's an example of some generated questions from a BBC article about a new Netflix show about arranged marriages in India. We can instantiate the `QuestionGenerator` and use it like this:
+Here's an example of some generated questions from [a BBC article about a new Netflix show about arranged marriages in India](https://www.bbc.com/news/world-asia-india-53499195). We can instantiate the `QuestionGenerator` and use it like this:
 ```
 from questiongenerator import QuestionGenerator
 from questiongenerator import print_qa
