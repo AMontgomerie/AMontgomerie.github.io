@@ -1,2 +1,10 @@
-<h1>{{ site.posts.last.title }}</h1>
-{{ site.posts.last.content }}
+<h1>Latest Posts</h1>
+
+<ul>
+  {% for post in site.posts %}
+    <li>
+      <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+      {{ post.excerpt }}
+    </li>
+  {% endfor %}
+</ul>
