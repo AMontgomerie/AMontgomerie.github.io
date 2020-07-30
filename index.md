@@ -1,10 +1,11 @@
-<h1>Latest Posts</h1>
+<h1>Latest Post</h1>
+{% for post in site.posts limit:1 %}
+<h1>{{ post.title }}</h1>
+{{ post.content }}
+{% endfor %}
 
-<ul>
-  {% for post in site.posts %}
-    <li>
-      <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
-      {{ post.excerpt }}
-    </li>
-  {% endfor %}
-</ul>
+<h1>Recent Posts</h1>
+{% for post in site.posts offset:1 limit:2 %}
+<h1>{{ post.title }}</h1>
+{{ post.content }}
+{% endfor %}
