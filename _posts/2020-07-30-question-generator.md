@@ -27,7 +27,7 @@ In order to train a QG model, I needed to get hold of some question and answer d
 
 [MSMARCO](https://microsoft.github.io/msmarco/) is a dataset containing questions from Bing searches and corresponding answers with supporting texts. This dataset also contains lots of good questions, but many of them are not in full grammatical question sentences. This is because people typing questions into a search engine only really need to type some key words rather than a full grammatical question. In order to resolve this, I filtered the dataset to only include examples which start with a list of possible question words; for example "who...?" or "does...?" Even some of these turned out to be not real question sentences though. People often type phrases like "how to bake a cake" into a search engine. In this case, I replaced the "how to" with "how do you" creating the grammatical question sentence "How do you bake a cake?"
 
-After filtering the datasets, I concatenated the answer and context fields into the format of `answer: <answer text> context: <context text>`. Once concatenated the data could then be encoded and fed into a neural network. The question field was kept as a label for calculating loss during training. The final dataset contained about 250,000 examples taken from the 4 datasets mentioned.
+After filtering the datasets, I concatenated the answer and context fields into the format of `answer_token <answer> context_token <context>`. Once concatenated the data could then be encoded and fed into a neural network. The question field was kept as a label for calculating loss during training. The final dataset contained about 250,000 examples taken from the 4 datasets mentioned.
 
 ## Defining a Model and Training It
 
@@ -114,9 +114,19 @@ In order to make multiple-choice answers more difficult to distinguish between, 
 
 > Q: Which city has the largest population in the world?
 >
-> A: Tokyo.
+> A: Tokyo
 
-We can identify "Tokyo" as an entity of type `GPE` (for GeoPolitical Entity), and then search the text for others of the same type. The final question will then present the user with 4 geopolotical entities (e.g. other cities, or countries), rather than 1 city and 3 completely random phrases. This is of course only possible if there are 3 other locations mentioned in the text!
+We can identify "Tokyo" as an entity of type `GPE` (for GeoPolitical Entity), and then search the text for others of the same type. The final question will then present the user with 4 geopolotical entities (e.g. other cities, or countries), rather than 1 city and 3 completely random phrases. This is of course only possible if there are 3 other locations mentioned in the text! If there are only two other `GPE` entities in the text, the empty slot will be filled by another random entity. For example:
+
+> Q: Which city has the largest population in the world?
+>
+> A: 1. Kumamoto
+>
+>    2. Shinzo Abe
+>
+>    3. Tokyo
+>
+>    4. Japan
 
 My final system allows the user to choose between full-sentence answers, multiple-choice answers, or a mix of both. I've found that the full-sentence QA pairs tend to be of better quality. This is likely because the training data mostly consisted of full-sentence answers. The QA evaluator model agrees with me, and so when a mix of both question styles is selected, the output tends to include mostly full-sentence QA pairs (as they were ranked higher than the multiple-choice ones).
 
