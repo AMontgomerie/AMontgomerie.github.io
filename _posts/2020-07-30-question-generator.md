@@ -39,7 +39,7 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 tokenizer = AutoTokenizer.from_pretrained("t5-base")
 model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
 ```
-This model also includes a loss function, making training very simple:
+Once we have the model and tokenizer, we can easily encode inputs, pass them into the model, and generate outputs:
 ```python
 input_text = # concatenated answer and context here
 encoded_input = tokenizer(input_text)
@@ -48,7 +48,7 @@ outputs = model(
   attention_mask=encoded_input['attention_mask'],
   lm_labels=masked_labels)
 ```
-`masked_labels` here refers to our encoded target (question) sequence with any padding replaced with the value -100. This indicates to T5 that it should ignore that part of the target when calculating loss. If we don't do this then the loss values would probably be really low as we'd be counting all the padding in the input and output sequences as a correct prediction! I generated the label mask like this:
+`masked_labels` here refers to our encoded target (question) sequence with any padding replaced with the value -100. This indicates to T5 that it should ignore that part of the target when calculating loss. If we don't do this then the loss values will be incredibly low as any matching padding will count as a correct prediction! I actually made this mistake at first, and found that the model always generated one-word answers followed by 511 pad tokens (the maximum sequence length is 512). Correctly masking the padding in the label sequence solves this issue. I generated the label mask like this:
 ```python
 def mask_label_padding(labels):
     MASK_ID = -100
@@ -69,9 +69,17 @@ I was initially worried that the model might inconsistently create grammatical q
 
 On the other hand, I noticed that the model would sometimes generate questions with either no relevance to the answer, or no relevance to the context. The latter were particularly common. An example of this is a question generated from an article about some news relating to Hong Kong and big tech companies. Instead of asking about what happened in the story, the model simply generated the question "what is Facebook?" While this question is grammatically correct and answerable, it is not a reading comprehension question relating to the text, because the text did not contain an explanation of what Facebook is.
 
-Another issue was that the model generated some questions which were tautological or contained the answer within the question. For example, from a text about some events happening in the US, the model generated "Q: Where is Georgia? A: Georgia". This is both irrelevant, because the article didn't explain where Georgia is, and obviously redundant, because the answer doesn't add anything that we didn't already know from the question.
+Another issue was that the model generated some questions which were tautological or contained the answer within the question. For example, from a text about some events happening in the US, the model generated:
 
-To deal with these issues, I decided to train another model which would evaluate the generated questions and answers. I decided to use a pretrained version of BERT for this task. I chose BERT because one of its pretraining objectives is Next Sentence Prediction (NSP). NSP involves taking two sentences, and predicting whether or not the second sentence follows the first one or not. 
+> Q: Where is Georgia? 
+>
+> A: Georgia
+
+This is both irrelevant, because the article didn't explain where Georgia is, and obviously redundant, because the answer doesn't add anything that we didn't already know from the question.
+
+To deal with these issues, I decided to train another model which would evaluate the generated questions and answers. I decided to use a pretrained version of BERT for this task. BERT was introduced in [BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](https://arxiv.org/abs/1810.04805). BERT is a transformer model pretrained using a Cloze-style task called masked language modeling; which is basically filling in the blanks in sentences. Using this as a pretraining objective has the advantage of forcing the model to learn bidirectional representations since it must consider what comes before and after the blank to make an accurate prediction. This is in comparison to traditional language modeling objectives, which require the model to predict the next word in a sequence, only learning context from one direction.
+
+Bi-directional representations means that BERT is good for language comprehension tasks, such as evaluating questions and answers! I also chose BERT because of one of its other pretraining objectives, called Next Sentence Prediction (NSP). NSP involves taking two sentences, and predicting whether or not the second sentence follows the first one or not. 
 
 For my project, I repurposed the NSP objective by setting the first sentence as a question and the second sentence as the answer to the question. I used the same `[CLS]` and `[SEP]` tokens as were used in pretraining.
 ```python
@@ -83,13 +91,13 @@ For my project, I repurposed the NSP objective by setting the first sentence as 
 ```
 To fine-tune the model, I reused the dataset from the question generator, but removed the context. During training, 50% of the time the model would be given the correct QA pair, but in the other 50% of the time, the answer would be corrupted. I defined two corruption operations: the first one was to replace the answer with another random irrelevant answer from the dataset, and the second was to take a named entity from the question, and copy into the answer. The training objective was then to predict whether the answer had been corrupted or not.
 
-Before fine-tuning on this objective, the pretrained BERT model was only able to achieve 55% on the validation set, which isn't much better than a random guess. But after several epochs it was able to get over 90% which, while not perfect, I decided was good enough to filter out some of the bad QA pairs.
+Before fine-tuning on this objective, the pretrained BERT model was only able to achieve 55% on the validation set, which isn't much better than a random guess. But after training it was able to get over 90% which, while not perfect, I decided was good enough to filter out some of the bad QA pairs.
 
 The code for the QA evaluator training can be found [here](https://github.com/iarfmoose/question_generator/blob/master/training/qa_evaluator_training.ipynb).
 
 ## The Final System Pipeline
 
-So now the system contained two models: the first of which takes answers and generates questions, and the second of which evaluates whether or not those QA pairs are valid or not. An earlier version of the system also included a third model which summarised the text in order to extract the best sentences to use as answers to feed into the QG model. But I found this to be overall too much filtering; both filtering sentences before question generation, and filtering QA pairs after generation. The result was that the model was only able to output a very small number of questions about each article.
+Now we've discussed a system containing two models: the first of which takes answers and generates questions, and the second of which evaluates whether or not those QA pairs are valid or not. An earlier version of the system also included a third model which summarised the text in order to extract the best sentences to use as answers to feed into the QG model. But I found this to be overall too much filtering; both filtering sentences before question generation, and filtering QA pairs after generation. The result was that the model was only able to output a very small number of questions about each article.
 
 As a result, I decided to cut the summarisation model. This enabled me to feed a larger number of candidate answers into the QG model, giving the evaluator more QA pairs to sift through.
 
@@ -133,6 +141,7 @@ qa_list = qg.generate(
 print_qa(qa_list)
 ```
 Initialising the Question Generator will automatically initialise the QA Evaluator too, and questions will be automatically ranked unless `use_qa_eval=False`. This is the output:
+
 ```
 Generating questions...
 
