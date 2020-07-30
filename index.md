@@ -1,6 +1,6 @@
 <ul>
    {% for item in site.data.navigation %}
-      <li><a href="{{ item.url }}">{{ item.title }}</a></li>
+      <a href="{{ item.url }}">{{ item.title }}</a>
    {% endfor %}
 </ul>
 
