@@ -1,8 +1,4 @@
----
-layout: page
-title: "Contact"
-permalink: /contact/
----
+# Contact
 
 email: adam.montgomerie971@gmail.com
 
