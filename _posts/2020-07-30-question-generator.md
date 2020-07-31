@@ -29,7 +29,7 @@ In order to train a QG model, I needed to get hold of some question and answer d
 
 After filtering the datasets, I concatenated the answer and context fields into the format of `answer_token <answer> context_token <context>`. Once concatenated the data could then be encoded and fed into a neural network. The question field was kept as a label for calculating loss during training. The final dataset contained about 250,000 examples taken from the 4 datasets mentioned.
 
-## Defining a Model and Training It
+## Training a Model
 
 The vast majority of modern NLP systems are based on the Transformer architecture introduced in [Attention Is All You Need](https://arxiv.org/abs/1706.03762). These days there is a large variety of different architectures. After reading about several recent architectures, I settled on Google's T5 model, which was introduced in [Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer](https://arxiv.org/abs/1910.10683). The basic idea behind T5 is reframing all NLP tasks as sequence-to-sequence tasks. For example, for summarisation, the model takes the text to be summarised as an input sequence, and outputs the summary as a sequence. For sentiment analysis, the model takes the text to be analysed as an input sequence, and outputs a sequence which states the sentiment of the text. This is useful because although the model wasn't designed or pretrained with the goal of QG in mind, it can be easily repurposed for QG: we can simply use the answer and context as an input, and train the model to give us a question as the output sequence.
 
@@ -49,7 +49,11 @@ outputs = model(
   attention_mask=encoded_input['attention_mask'],
   lm_labels=masked_labels)
 ```
-`masked_labels` here refers to our encoded target (question) sequence with any padding replaced with the value -100. This indicates to T5 that it should ignore that part of the target when calculating loss. If we don't do this then the loss values will be incredibly low as any matching padding will count as a correct prediction! I actually made this mistake at first, and found that the model always generated one-word answers followed by 511 pad tokens (the maximum sequence length is 512). Correctly masking the padding in the label sequence solves this issue. I generated the label mask like this:
+`masked_labels` here refers to our encoded target (question) sequence with any padding replaced with the value -100. This indicates to T5 that it should ignore that part of the target when calculating loss. From [the documentation](https://huggingface.co/transformers/model_doc/t5.html#t5forconditionalgeneration):
+
+> All labels set to -100 are ignored (masked), the loss is only computed for labels in [0, ..., config.vocab_size]
+
+If we don't do this then the loss values will be incredibly low as any matching padding will count as a correct prediction! I actually made this mistake at first, and found that the model always generated one-word answers followed by 511 pad tokens (the maximum sequence length is 512). Correctly masking the padding in the label sequence solves this issue. I generated the label mask like this:
 ```python
 def mask_label_padding(labels):
     MASK_ID = -100
