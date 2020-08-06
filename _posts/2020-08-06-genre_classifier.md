@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Using the Spotify API with Spotipy to Collect and Label Track Data"
+title: "Using Spotipy to Collect Track Data"
 date: 2020-07-30
 ---
 
@@ -79,7 +79,7 @@ album_tracks = sp.album_tracks(album_id)
 preview_urls = [track['preview_url'] for track in album_tracks['items']]
 ```
 Now we have the preview urls, we can download them using [urlretrieve](https://docs.python.org/3/library/urllib.request.html):
-```
+```python
 from urllib.request import urlretrieve
 
 directory = "directory/to/save/in"
