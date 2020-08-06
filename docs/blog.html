@@ -4,6 +4,8 @@ title: Blog
 permalink: /blog/
 ---
 
+{{ post.title }} {{ post.date }}
+
 <ul>
    {% for item in site.data.navigation %}
       <a href="{{ item.url }}">{{ item.title }}</a>
