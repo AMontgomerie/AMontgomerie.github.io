@@ -11,9 +11,9 @@ For a [recent project on classifying music genres](https://github.com/iarfmoose/
 
 In this post I'll show how to use Spotipy to get track data, and how to download track samples. We'll also discuss a couple of genre labelling strategies and their issues.
 
-# Using Spotipy
+## Using Spotipy
 
-## Setup and Login
+### Setup and Login
 The first thing you need to do is register a [Spotify Developer account](https://developer.spotify.com/). From the Dashboard, click "create an app", choose a name, write a description and agree to the terms. This will give you a *Client ID* and a *Client Secret* which you can use to gain access. 
 
 Using Spotipy, we can now log in like this:
@@ -31,7 +31,7 @@ secret = "<Your Client Secret>"
 sp = spotify_login(cid, secret)
 ```
 
-## Getting data
+### Getting data
 
 We can now use `sp`'s methods to query Spotify. For example, if I want to find Radiohead, I can call `sp.search()` like this: 
 ```python
@@ -70,7 +70,7 @@ Burn the Witch
 The Daily Mail / Staircase
 ```
 
-## Downloading Track Samples
+### Downloading Track Samples
 
 We can also access 30-second track samples from Spotify using each track's `preview_url` attribute. Note that not all tracks have this enabled. Let's say we want to take the first Radiohead album from the list, which is `'OK Computer OKNOTOK 1997 2017'`, and download track samples from it. We can do this by getting the albums's Album ID and then calling `sp.album_tracks()`. We can then make a list of urls like this:
 ```python
@@ -89,11 +89,11 @@ for i in range(len(preview_urls)):
 ```
 This will download the numbered tracks into the directory specified.
 
-# Genre Labelling
+## Genre Labelling
 
 For my project I needed track samples labelled by genre. Unfortunately Spotify tracks don't have a `genre` attribute so I needed to find a more creative way to label them. I tried two methods for labelling tracks: using playlists as labels, and using artist genres as labels.
 
-## Playlists as Labels
+### Playlists as Labels
 
 Users often make playlists with a coherent theme, and this theme is sometimes a particular genre. We can use these themed playlists as collections of labelled tracks. Using this method we have a pretty simple data collection strategy: we just need to define a list of genres to search for, search for playlists in each genre, and label any tracks we find with the corresponding genre label.
 
@@ -128,17 +128,17 @@ Rock Covers: 70 tracks
 ```
 We could replace `print_playlist_info()` with some code containing urlretrieve if we want to download the track data instead. We can also store data about the tracks in a Pandas DataFrame and save it to a CSV file.
 
-### Issues
+#### Issues
 
 An issue with this approach is that we can't guarantee the coherence of the tracks in the playlist. Most Spotify playlists are user-generated, and there is no obligation for tracks to be a single genre, even if the playlist is named in such a way as to indicate that they are.
 
-## Artist Genres as Labels
+### Artist Genres as Labels
 
 While individual tracks don't come with genre tags on Spotify, artists do! So instead of relying on the people making playlists to label our data for us, we can just look for artists that have a given genre tag and collect data about their tracks. Unfortunately we can't just do `sp.search('metal', type='artist')` because this will return a list of bands who have *metal* in their band name, not a list of bands that have metal as a genre tag. (Having said this, there does seem to be a bunch of metal bands whose name includes the word "metal"!)
 
 If we can't search for artists by genre, how do find them? One solution is to search by playlist again, and then check each artist in the playlist to see if they have the genre tag we're looking for. If they do then we can collect their music and label it accordingly.
 
-### Related artists
+#### Related artists
 
 In addition to this, we can use Spotify's Related Artists feature to find more artists with the same tags. We can just keep iterating recursively through related artists until we can't find any more that have the tags we're looking for. One difficulty with this approach is that related artists are often quite tightly interconnected, meaning that we could end up going round in circles through the same artists endlessly. To solve this, we can build a list of artists as we go: if we already have an artist in our list we can ignore them and stop exploring in that direction, but if we haven't seen them yet we can check their genre tags and delve deeper into their related artists. 
 
@@ -154,7 +154,7 @@ def add_related_artists(artist_id, genre_artists, existing_artists):
 ```
 Given an Artist ID, we query Spotify for their related artists. Then we iterate over the related artists and try adding them to our list. `add_artist()` returns `True` if we are seeing the artist for the first time, in which case it will be added to the list, and `False` otherwise. As long as artists are being added, we keep calling `add_related_artists()` recursively to find more.
 
-### Issues
+#### Issues
 
 However, this approach also has issues. Each artist has a variable length list of genre tags, so it's not clear which is the "correct" label. Artists sometimes make music which crosses genre boundaries, or make several different styles of music over the course of their careers. Since the tags are related to the artist and not to individual tracks, it's difficult to determine exactly which tracks should have which labels.
 
@@ -162,6 +162,6 @@ One solution would be to allow for multiple labels. We could simply add the whol
 
 Another solution is to just enforce a one-label-per-artist policy. We can predefine a list of genres that we are looking for, and if we find an artist with that tag, we assign all their music that label. This is a less precise solution for the reasons previously mentioned, and there's also a chance that an artist will fit into several of our chosen classes, so we'd need to be careful to remove any artists that appear multiple times under different genres.
 
-# Conclusion
+## Conclusion
 
 Using Spotipy, it's fairly simple to collect and save both tabular data and mp3 track samples. It's not so easy to label this data for a genre classification task. In the end, for my project, I decided to go with the simpler solution of enforcing a one-label-per-artist policy. This enabled me to build a multi-class classifier and train it on data which has one correct label per example. The full project repository can be found [here](https://github.com/iarfmoose/genre_classifier).
