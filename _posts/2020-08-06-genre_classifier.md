@@ -1,14 +1,14 @@
 ---
 layout: default
 title: "Using Spotipy to Collect Track Data"
-excerpt: For a [recent project on classifying music genres](https://github.com/iarfmoose/genre_classifier) I needed  to collect a large dataset of labelled tracks. [The Spotify API](https://developer.spotify.com/documentation/web-api/) is ideal for this because, a long with a variety of tabular track data, you can download 30-second track samples from the majority of tracks. An easy way to use the Spotify API in Python is through [Spotipy](https://spotipy.readthedocs.io/en/2.13.0/). 
+excerpt: For a recent project on classifying music genres, I needed to collect a large dataset of labelled tracks. The Spotify API is ideal for this because, a long with a variety of tabular track data, you can download 30-second track samples from the majority of tracks. An easy way to use the Spotify API in Python is through Spotipy. 
 date: 2020-07-30
 ---
 
 {{ post.title }}
 {{ post.date }}
 
-For a [recent project on classifying music genres](https://github.com/iarfmoose/genre_classifier) I needed  to collect a large dataset of labelled tracks. [The Spotify API](https://developer.spotify.com/documentation/web-api/) is ideal for this because, a long with a variety of tabular track data, you can download 30-second track samples from the majority of tracks. An easy way to use the Spotify API in Python is through [Spotipy](https://spotipy.readthedocs.io/en/2.13.0/). 
+For a [recent project on classifying music genres](https://github.com/iarfmoose/genre_classifier), I needed to collect a large dataset of labelled tracks. [The Spotify API](https://developer.spotify.com/documentation/web-api/) is ideal for this because, a long with a variety of tabular track data, you can download 30-second track samples from the majority of tracks. An easy way to use the Spotify API in Python is through [Spotipy](https://spotipy.readthedocs.io/en/2.13.0/). 
 
 In this post I'll show how to use Spotipy to get track data, and how to download track samples. We'll also discuss a couple of genre labelling strategies and their issues.
 
