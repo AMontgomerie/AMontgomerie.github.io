@@ -14,4 +14,4 @@ permalink: /contact/
 
 email: adam.montgomerie971@gmail.com
 
-twitter: [@iarfMoose](https://twitter.com/iarfmoose)
+twitter: [@AMontgomerie_](https://twitter.com/AMontgomerie_)
