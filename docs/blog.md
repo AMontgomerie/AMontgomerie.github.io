@@ -1,7 +1,6 @@
 ---
 title: Blog
 permalink: /blog/
-layout: _layouts/default
 ---
 
 <h1>Latest Posts</h1>
