@@ -1,9 +1,3 @@
-<ul>
-   {% for item in site.data.navigation %}
-      <a href="{{ item.url }}">{{ item.title }}</a>
-   {% endfor %}
-</ul>
-
 <h1>Latest Post</h1>
 {% for post in site.posts limit:1 %}
 <h1>{{ post.title }}</h1>
