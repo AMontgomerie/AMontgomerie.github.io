@@ -4,7 +4,7 @@ title: "Using Spotipy to Collect Track Data"
 date: 2020-07-30
 ---
 
-# Using Spotipy to Collect Track Data
+<h1>{{ page.title }}</h1>
 
 For a [recent project on classifying music genres](https://github.com/iarfmoose/genre_classifier), I needed to collect a large dataset of labelled tracks. [The Spotify API](https://developer.spotify.com/documentation/web-api/) is ideal for this because, a long with a variety of tabular track data, you can download 30-second track samples from the majority of tracks. An easy way to use the Spotify API in Python is through [Spotipy](https://spotipy.readthedocs.io/en/2.13.0/). 
 <!--more-->
