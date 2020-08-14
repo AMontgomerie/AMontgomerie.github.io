@@ -5,7 +5,7 @@ date: 2020-07-30
 
 ---
 
-{{ page.title }}
+<h1>{{ page.title }}</h2>
 
 As someone who has both taught English as a foreign language and has tried learning languages as a student, I know that it's important to find interesting things to read when practicing reading comprehension. The internet is of course a great source of material. However, one difficulty when attempting to study using material you find online is that it's not always easy to test your understanding. In order to get some feedback, you either have to find a teacher who will quiz you, or instead use a textbook which has some pre-written questions and answers. But a teacher is not always on-hand, and using textbooks significantly limits the range of reading material you can use.
 <!--more-->
