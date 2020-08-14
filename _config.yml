@@ -1,3 +1,4 @@
 theme: jekyll-theme-slate
 title: iarfML
 description: A blog about NLP and Machine Learning
+excerpt_separator: <!--more-->
