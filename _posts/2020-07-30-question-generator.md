@@ -3,6 +3,7 @@ layout: default
 title: "Generating Questions Using Transformers"
 date: 2020-07-30
 excerpt: The original goal of this project was to create a system to allow independent learners to test themselves on a set of questions about any text that they choose to read. This means that a learner would be able to pick texts that are about topics they find interesting, which will motivate them to study more. In order to achieve this, I decided to train a neural network to generate questions.
+
 ---
 
 <h1>{{ page.title }}</h2>
