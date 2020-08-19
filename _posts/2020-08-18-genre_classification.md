@@ -20,7 +20,9 @@ I decided to focus mostly on a single parent genre in order to limit the number 
 
 For comparison I also collected another dataset of top level genres like classical, rock, and folk. This dataset is smaller, at only about forty thousand examples, and contains only ten classes.
 
-After collecting track data from artists for all of the subgenres and downloading track samples for them, I converted the samples from mp3 files to mel-spectrogram pngs. Here's some examples of processed mel-spectrograms:
+After collecting track data from artists for all of the subgenres and downloading track samples for them, I converted the samples from mp3 files to mel-spectrogram pngs. A spectrogram is a visual representation of sound frequencies over time. Usually the Y-axis is decibels and the X-axis is time. Mel-spectrograms are a type of spectrogram where the Y-axis uses the [Mel scale](https://en.wikipedia.org/wiki/Mel_scale). This means that it has been rescaled to more accurately reflect the ways that humans hear sounds.
+
+Here's some examples of processed mel-spectrograms which I generated:
 
 ![](/images/techno_spectrogram.png)
 *Techno*
