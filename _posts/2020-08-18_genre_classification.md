@@ -2,7 +2,8 @@
 layout: default
 title: "Classifying Heavy Metal Subgenres with Mel-spectrograms"
 date: 2020-07-30
-excerpt: Distinguishing between broad music genres like rock, classical, or hip-hop is usually not very challenging for human listeners. However being able to tell apart the subgenres of these broad categories is not always so simple. Someone who is not already a big fan of house music probably won't be able to distinguish deep house from tech house for example. The subtle differences between subgenres only become apparent when you become a more experienced listener. Training a neural network to classify music genres is not a new idea, but I thought it would be interesting to see if one could be trained to classify subgenres on a more precise level.
+excerpt: Training a neural network to classify music genres is not a new idea, but I thought it would be interesting to see if one could be trained to classify subgenres on a more precise level.
+
 ---
 
 <h1>{{ page.title }}</h1>
