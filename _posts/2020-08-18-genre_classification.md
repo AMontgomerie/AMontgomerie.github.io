@@ -22,7 +22,7 @@ For comparison I also collected another dataset of top level genres like classic
 
 After collecting track data from artists for all of the subgenres and downloading track samples for them, I converted the samples from mp3 files to mel-spectrogram pngs. Here's some examples of processed mel-spectrograms:
 
-<img src="/images/spectrograms.png">
+![](/images/spectrograms.png)
 
 The vertical axis is frequency, and the horizontal axis is time (thirty seconds of each track). I didn't label or colourise these images because they were originally meant for a neural network rather than a human audience. At a glance, we can see some differences. Techno is very uniform, whereas jazz is quite irregular. Classical seems to softly change over time, whereas jazz appears to more suddenly change.
 
@@ -82,7 +82,7 @@ I generated a confusion matrix from each of the trained models to see which genr
 
 Here's the confusion matrix:
 
-<img src="/images/genre_confusion_matrix.png">
+![](/images/genre_confusion_matrix.png)
 
 Here's a key for the labels:
 ```
