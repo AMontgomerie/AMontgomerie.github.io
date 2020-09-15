@@ -1,6 +1,3 @@
 theme: minima
 title: Adam Montgomerie
 markdown: kramdown
-header_pages:
-  - contact.md
-  - blog.md
