@@ -1,4 +1,4 @@
-theme: jekyll-theme-slate
+theme: minima
 title: Adam Montgomerie
 markdown: redcarpet
 redcarpet:
