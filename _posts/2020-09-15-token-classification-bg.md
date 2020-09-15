@@ -109,6 +109,7 @@ Below is a comparison of model accuracy with various configurations on the POS t
 ### Part-Of-Speech Tagging:
 
 **RoBERTa-small**
+
 | Model                        | Token Mapping | Accuracy |
 |------------------------------|---------------|----------|
 | roberta-small-pretrained     | first         | 97.75%   |
@@ -117,6 +118,7 @@ Below is a comparison of model accuracy with various configurations on the POS t
 | roberta-small-no-pretraining | last          | 93.13%   |
 
 **RoBERTa-base**
+
 | Model                       | Token Mapping | Accuracy |
 |-----------------------------|---------------|----------|
 | roberta-base-pretrained     | first         | 97.40%   |
@@ -127,6 +129,7 @@ Below is a comparison of model accuracy with various configurations on the POS t
 ### Named-Entity Recognition
 
 **RoBERTa-small**
+
 | Model                        | Token Mapping | Accuracy |
 |------------------------------|---------------|----------|
 | roberta-small-pretrained     | first         | 98.52%   |
@@ -135,6 +138,7 @@ Below is a comparison of model accuracy with various configurations on the POS t
 | roberta-small-no-pretraining | last          | 95.69%   |
 
 **RoBERTa-base**
+
 | Model                       | Token Mapping | Accuracy |
 |-----------------------------|---------------|----------|
 | roberta-base-pretrained     | first         | 98.61%   |
