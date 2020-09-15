@@ -8,7 +8,7 @@ excerpt: The amount of tools for Bulgarian language learners seems pretty limite
 
 <h1>{{ page.title }}</h1>
 
-All the code for this project can be found at: https://github.com/AMontgomerie/bulgarian-nlp
+All the code for this project can be found at: [https://github.com/AMontgomerie/bulgarian-nlp](https://github.com/AMontgomerie/bulgarian-nlp).
 
 I can’t really speak Bulgarian, but I’d like to be able to. Sometimes when I receive an instant message in Bulgarian that I can’t understand, I’m forced to just copy-paste it into Google Translate,  which helps me find the overall meaning of the sentence most of the time, but doesn’t provide much in the way of lexical or grammatical information which I could learn something from.
 
