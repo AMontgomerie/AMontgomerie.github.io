@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Token Classification With Sub-word Tokenizers for Bulgarian"
+title: "Token Classification With Subword Tokenizers for Bulgarian"
 date: 2020-09-02
 excerpt: The amount of tools for Bulgarian language learners seems pretty limited, so I thought I’d try building my own. I wanted to know what the individual words in the sentences I Google-translating were doing, so I decided to train a part-of-speech (POS) tagger. While I was at it I also trained a model for named-entity recognition (NER).
 
