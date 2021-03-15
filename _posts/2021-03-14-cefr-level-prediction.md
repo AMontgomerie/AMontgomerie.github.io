@@ -17,7 +17,7 @@ The final dataset contains 1500 example texts split over the 6 CEFR levels. The 
 
 The dataset was then split into 80% training and 20% test.
 
-## Baseline Performance
+## Text Complexity Metrics as a Baseline
 The [textstat](https://pypi.org/project/textstat/) libraries contains a variety of functions for calculating text readability and complexity metrics, including all the previously mentioned ones. To set a baseline performance, each metric was computed for every example in the test set, and the results were scaled and rounded to fit in the range of labels for classification. Of these metrics, scaled Smog Index performed the best with 41% accuracy on the test set. Most seemed to have some predictive power with regards to CEFR levels, except for Flesch Reading Ease which got less than 13% (below the accuracy of a system which generates a random number between 0 and 5).
 
 | Text Complexity Metric       | Accuracy |
@@ -36,15 +36,15 @@ The [textstat](https://pypi.org/project/textstat/) libraries contains a variety 
 
 ## Feature Engineering
 
-The next stage was to try to train some classifiers. To make the data usable with sklearn models, I needed to preprocess the texts. The Textstat metrics mentioned in the previous section were used as features. In addition, I generated some additional features such as the mean parse tree depth and the mean number of each part-of-speech tag using [spaCy](https://spacy.io/usage/linguistic-features/). Features using the mean were preferred over absolute counts to prevent the level predictions from being directly tied to text length. Higher level texts tend to be longer, but the length of a text by itself is not a good indicator of the text’s difficulty. A short text containing complex sentences filled with obscure terminology is more difficult to read than a longer text of simple short sentences. 
+In order to try fitting some classifiers, I needed to generate some features. Since the text complexity metrics individually displayed some level of predictive power, I decided to use them. In addition, I generated some features such as the mean parse tree depth and the mean number of each part-of-speech tag using [spaCy](https://spacy.io/usage/linguistic-features/). Features using the mean were preferred over absolute counts to prevent the level predictions from being directly tied to text length. Higher level texts tend to be longer, but the length of a text by itself is not a good indicator of the text’s difficulty. A short text containing complex sentences filled with obscure terminology is more difficult to read than a longer text of simple short sentences. 
 
 ## Training
 
 I tried training SVC, Decision Tree, Random Forest, and XGBoost. At almost 71% accuracy on the test set, XGBoost slightly outperformed the others.
 
-I also also trained a couple of transformer models, which I initially assumed would outperform XGBoost. Pretrained [BERT-base](https://huggingface.co/bert-base-cased) and [DeBERTa-base](https://huggingface.co/microsoft/deberta-base) were fine-tuned for sequence classification. The raw text was tokenised, encoded, and used as inputs into the models. But even after experimenting with various hyperparameters, neither transformer managed to outperform XGBoost. These transformer-based solutions are also significantly more resource intensive than XGBoost, and slower at inference without a GPU.
+I also also fine-tuned a couple of transformer models, which I initially assumed would be stronger at this kind of language understanding classification task. Pretrained [BERT-base](https://huggingface.co/bert-base-cased) and [DeBERTa-base](https://huggingface.co/microsoft/deberta-base) were fine-tuned for sequence classification. The raw text was tokenised, encoded, and used as inputs into the models. But even after experimenting with various hyperparameters, neither transformer managed to outperform XGBoost. These transformer-based solutions are also significantly more resource intensive than XGBoost, and slower at inference without a GPU.
 
-The training code and model artifacts for the sklearn classifiers can be found [here](https://github.com/AMontgomerie/CEFR-English-Level-Predictor). A notebook for finetuning BERT on the same data can be found [here](https://colab.research.google.com/drive/1rUQkjmr0fwJB_xDhafVXxveyBWex83Dz?usp=sharing). The table below shows the best test set accuracy I was able to get with each model.
+The training code and model artifacts for the sklearn classifiers can be found [here](https://github.com/AMontgomerie/CEFR-English-Level-Predictor). A Colab notebook for finetuning BERT on the same data can be found [here](https://colab.research.google.com/drive/1rUQkjmr0fwJB_xDhafVXxveyBWex83Dz?usp=sharing). The table below shows the best test set accuracy I was able to get with each model.
 
 | Model                     | Accuracy |
 |---------------------------|----------|
@@ -64,16 +64,17 @@ A maximum of 71% accuracy on this 6 class problem isn’t a particularly impress
 Another likely reason is that the criteria for levelling texts are fairly vague, so the boundaries between each class are not clearly defined. [The criteria](https://rm.coe.int/CoERMPublicCommonSearchServices/DisplayDCTMContent?documentId=090000168045bb52) seem to be a set of “can-do” statements for each level, such as “can understand texts that consist mainly of high frequency everyday or job-related language” (B1). It’s not clear exactly which vocabulary is included in “high frequency everyday or job-related language”, or how much of text must consist of this to be considered “mainly”.
 
 #### Confusion Matrix
+
 | label | A1 | A2 | B1 | B2 | C1 | C2 |
 |-------|----|----|----|----|----|----|
-| A1    | 52 | 5  | 1  | 0  | 0  | 0  | 
-| A2    | 13 | 40 | 1  | 1  | 0  | 0  | 
-| B1    | 0  | 5  | 23 | 12 | 1  | 0  | 
-| B2    | 0  | 2  | 9  | 32 | 13 | 1  | 
+| A1    | 52 | 5  | 1  | 0  | 0  | 0  |
+| A2    | 13 | 40 | 1  | 1  | 0  | 0  |
+| B1    | 0  | 5  | 23 | 12 | 1  | 0  |
+| B2    | 0  | 2  | 9  | 32 | 13 | 1  |
 | C1    | 0  | 0  | 1  | 9  | 34 | 4  |
 | C2    | 0  | 0  | 0  | 0  | 9  | 31 |
 
-The confusion matrix above confirms that the majority of the model's incorrect predictions are one-off misclassifications; the model frequently confuses A1 and A2 for example, but rarely confuses a label with anything other than its immediate neighbour. This seems to confirm the idea that the boundaries are not easy to distinguish. For top-2 accuracy the model scored 95%.
+The confusion matrix above confirms that the majority of the model's incorrect predictions are one-off misclassifications. The model frequently confuses A1 and A2 for example, but rarely confuses a label with anything other than its immediate neighbour. This seems to confirm the idea that the boundaries are not easy to distinguish. For top-2 accuracy the model scored 95%.
 
 ## Using Probabilities to Distinguish Between Labels
 
