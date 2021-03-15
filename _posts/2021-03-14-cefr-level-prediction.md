@@ -6,6 +6,8 @@ date: 2021-03-14
 
 # Attempting to Predict the CEFR Level of English Texts
 
+To try out the final model, check out the [Streamlit app](http://cefr-predictor.ml/). The code is available on [Github](https://github.com/AMontgomerie/CEFR-English-Level-Predictor).
+
 I previously wrote [a blog about automatic reading comprehension question generation](https://amontgomerie.github.io/2020/07/30/question-generator.html). This one is somewhat related, in that it’s another project about English reading comprehension. This time I wanted to see if I could predict the [CEFR level](https://en.wikipedia.org/wiki/Common_European_Framework_of_Reference_for_Languages) of a given text. This kind of system is a useful tool for teachers or self-studying students as it helps them find reading material of an appropriate difficulty level.
 
 There are several tools like this that already exist, so this is mostly just an exercise in trying to reproduce their behaviour.  For example [Duolingo CEFR checker](https://cefr.duolingo.com/) which predicts CEFR at a word level, and then gives an overall score, and [Text Inspector](https://textinspector.com/), which predicts an overall score based on a number of metrics. There are also a number of metrics which aim to estimate the difficulty level of a text, like [the Flesch-Kincaid readability test](https://en.wikipedia.org/wiki/Flesch%E2%80%93Kincaid_readability_tests), [the Gunning Fog index](https://en.wikipedia.org/wiki/Gunning_fog_index), and [the Coleman-Liau index](https://en.wikipedia.org/wiki/Coleman%E2%80%93Liau_index).
