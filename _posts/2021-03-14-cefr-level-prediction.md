@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Using Spotipy to Collect Track Data"
+title: "Predicting the CEFR Level of English Texts"
 date: 2021-03-14
 ---
 
