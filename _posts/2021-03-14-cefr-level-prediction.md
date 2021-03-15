@@ -42,9 +42,9 @@ The next stage was to try to train some classifiers. To make the data usable wit
 
 I tried training SVC, Decision Tree, Random Forest, and XGBoost. At almost 71% accuracy on the test set, XGBoost slightly outperformed the others.
 
-I also also tried training some transformer models, which I initially assumed would outperform XGBoost. BERT-base and DeBERTa-base were fine-tuned for sequence classification. The raw text was tokenised, encoded, and used as inputs into the models. Neither transformer managed to outperform XGBoost, however. These transformer-based solutions are also significantly more resource intensive than XGBoost, and slower at inference without a GPU.
+I also also trained a couple of transformer models, which I initially assumed would outperform XGBoost. Pretrained [BERT-base](https://huggingface.co/bert-base-cased) and [DeBERTa-base](https://huggingface.co/microsoft/deberta-base) were fine-tuned for sequence classification. The raw text was tokenised, encoded, and used as inputs into the models. But even after experimenting with various hyperparameters, neither transformer managed to outperform XGBoost. These transformer-based solutions are also significantly more resource intensive than XGBoost, and slower at inference without a GPU.
 
-The code for the sklearn classifiers can be found [here](https://github.com/AMontgomerie/CEFR-English-Level-Predictor). A notebook for training BERT on the same data can be found [here](https://colab.research.google.com/drive/1rUQkjmr0fwJB_xDhafVXxveyBWex83Dz?usp=sharing). The table below shows the best test set accuracy I was able to get with each model.
+The training code and model artifacts for the sklearn classifiers can be found [here](https://github.com/AMontgomerie/CEFR-English-Level-Predictor). A notebook for finetuning BERT on the same data can be found [here](https://colab.research.google.com/drive/1rUQkjmr0fwJB_xDhafVXxveyBWex83Dz?usp=sharing). The table below shows the best test set accuracy I was able to get with each model.
 
 | Model                     | Accuracy |
 |---------------------------|----------|
@@ -55,19 +55,31 @@ The code for the sklearn classifiers can be found [here](https://github.com/AMon
 | Logistic Regression       | 67.9%    |
 | SVC                       | 67.9%    |
 
+Given these results I went with XGBoost as my final model.
+
 ## The Problem of Vague Boundaries
 
 A maximum of 71% accuracy on this 6 class problem isn’t a particularly impressive result. One possible limiting factor is that the data was collected from various sources without a set of consistent rules for labelling. 
 
 Another likely reason is that the criteria for levelling texts are fairly vague, so the boundaries between each class are not clearly defined. [The criteria](https://rm.coe.int/CoERMPublicCommonSearchServices/DisplayDCTMContent?documentId=090000168045bb52) seem to be a set of “can-do” statements for each level, such as “can understand texts that consist mainly of high frequency everyday or job-related language” (B1). It’s not clear exactly which vocabulary is included in “high frequency everyday or job-related language”, or how much of text must consist of this to be considered “mainly”.
 
-To check what the model was struggling with, I used a confusion matrix, which confirmed that most of the labels were one away from the correct difficulty level. This seems to confirm the idea that the boundaries are not easy to distinguish. When I calculated its top 2 accuracy, XGBoost scored 94% which shows that the majority of misclassification comes from the boundary between two levels.
+#### Confusion Matrix
+| label | A1 | A2 | B1 | B2 | C1 | C2 |
+|-------|----|----|----|----|----|----|
+| A1    | 52 | 5  | 1  | 0  | 0  | 0  | 
+| A2    | 13 | 40 | 1  | 1  | 0  | 0  | 
+| B1    | 0  | 5  | 23 | 12 | 1  | 0  | 
+| B2    | 0  | 2  | 9  | 32 | 13 | 1  | 
+| C1    | 0  | 0  | 1  | 9  | 34 | 4  |
+| C2    | 0  | 0  | 0  | 0  | 9  | 31 |
+
+The confusion matrix above confirms that the majority of the model's incorrect predictions are one-off misclassifications; the model frequently confuses A1 and A2 for example, but rarely confuses a label with anything other than its immediate neighbour. This seems to confirm the idea that the boundaries are not easy to distinguish. For top-2 accuracy the model scored 95%.
 
 ## Using Probabilities to Distinguish Between Labels
 
-In case where a text seems to lie somewhere between B1 and B2, we can call the text B1+ to indicate that it’s somewhere in the middle. Text Inspector seems to take the same approach in these cases. However,  the + labels are not present in the dataset which I collected, so to avoid having to completely relabel the data, the model’s predicted probabilities for each label are used. 
+In cases where a text seems to lie somewhere between B1 and B2, we can call the text B1+ to indicate that it’s somewhere in the middle. Text Inspector seems to take the same approach in these cases. However,  the + labels are not present in the dataset which I collected, so to avoid having to completely relabel the data, the model’s predicted probabilities for each label are used. 
 
-Predictions where max probability is below a certain threshold are counted as instances of the model being uncertain. In these cases the predicted label is the average of the max and the second strongest prediction. For example, in the case that the model predicts somewhere between 0 (A1) and 1 (A2), the returned value will now be 0.5 (A1+). This indicates that the text could belong in either A1 or A2, and might be appropriate for advanced A1 level readers, or A2 level readers.
+Predictions where the maximum probability is below a certain threshold (0.7) are counted as instances of the model being uncertain. In these cases the predicted label is the average of the max and the second strongest prediction. For example, in the case that the model predicts somewhere between 0 (A1) and 1 (A2), the returned value will now be 0.5 (A1+). This indicates that the text could belong in either A1 or A2, and might be appropriate for advanced A1 level readers, or A2 level readers.
 
 ## Improvements
 
