@@ -8,8 +8,6 @@ excerpt: The goal of this competition was to build a system which can predict ho
 
 <h1>{{ page.title }}</h1>
 
-![](/images/GOLD.png)
-
 This blog is mostly a repost of a thread I posted on Kaggle about this competition. You can find the original thread [here](https://www.kaggle.com/c/jigsaw-toxic-severity-rating/discussion/306063). The source code can be found [here](https://github.com/AMontgomerie/jigsaw-toxic-severity-competition).
 
 # Competition Overview
@@ -20,6 +18,10 @@ The target metric for the competition was Average Agreement with Annotators. Giv
 The test set was 200,000 pairs of comments, and the public leaderboard which is visible throughout the competition only contained 5%, or about 10,000 pairs, of the total test data. The small size of the public leaderboard meant that it was not a very reliable metric, which led lots of teams to overfit.
 
 Another complicating factor was that we didn't receive any training data for the competition. Instead we got a validation set, and some links to other similar toxicity-rating tasks to potentially use as extra data.
+
+In the end I came in 14th place, just barely getting a gold medal!
+
+![](/images/GOLD.png)
 
 # Solution Overview
 
