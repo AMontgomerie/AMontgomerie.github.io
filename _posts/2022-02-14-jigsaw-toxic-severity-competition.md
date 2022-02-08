@@ -8,6 +8,8 @@ excerpt: The goal of this competition was to build a system which can predict ho
 
 <h1>{{ page.title }}</h1>
 
+![](/images/GOLD.png)
+
 This blog is mostly a repost of a thread I posted on Kaggle about this competition. You can find the original thread [here](https://www.kaggle.com/c/jigsaw-toxic-severity-rating/discussion/306063). The source code can be found [here](https://github.com/AMontgomerie/jigsaw-toxic-severity-competition).
 
 # Competition Overview
