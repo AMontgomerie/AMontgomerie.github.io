@@ -4,7 +4,7 @@ title: "Jigsaw Rate Severity of Toxic Comments 14th Place Solution"
 date: 2022-02-14
 ---
 
-<h1>{{ page.title }}</h1>
+# Jigsaw Rate Severity of Toxic Comments 14th Place Solution
 
 This blog is mostly a repost of a thread I posted on Kaggle about this competition. You can find the original thread [here](https://www.kaggle.com/c/jigsaw-toxic-severity-rating/discussion/306063). The source code can be found [here](https://github.com/AMontgomerie/jigsaw-toxic-severity-competition).
 
