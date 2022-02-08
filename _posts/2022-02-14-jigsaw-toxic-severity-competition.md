@@ -2,8 +2,7 @@
 layout: default
 title: "Jigsaw Rate Severity of Toxic Comments 14th Place Solution"
 date: 2022-02-14
-excerpt: The goal of this competition was to build a system which can predict how toxic online comments are. What separated this from other similar sentiment analysis tasks was that the comments were divided randomly into pairs and then the comments in each pair were ranked by annotators. 
-
+excerpt: The goal of this competition was to build a system which can predict how toxic online comments are. What separated this from other similar sentiment analysis tasks was that the comments were divided randomly into pairs and then the comments in each pair were ranked by annotators.
 ---
 
 <h1>{{ page.title }}</h1>
