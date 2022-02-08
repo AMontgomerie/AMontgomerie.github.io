@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "Jigsaw Rate Severity of Toxic Comments 14th Place Solution"
-date: 2022-02-14
+date: 2022-02-08
 ---
 
 # Jigsaw Rate Severity of Toxic Comments 14th Place Solution
