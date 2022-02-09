@@ -2,6 +2,7 @@
 layout: default
 title: "Predicting the CEFR Level of English Texts"
 date: 2021-03-14
+excerpt: This time I wanted to see if I could predict the CEFR level of a given text. This kind of system is a useful tool for teachers or self-studying students as it helps them find reading material of an appropriate difficulty level.
 ---
 
 # Attempting to Predict the CEFR Level of English Texts
