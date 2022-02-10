@@ -2,7 +2,7 @@
 layout: default
 title: "Kaggle Journey to Competitions Master"
 date: 2022-02-10
-except: I started entering Kaggle competitions near the start of 2021. I had previously been working on a few machine learning side projects, but since starting to work full-time as an ML engineer I found that I didn’t really have the time or energy to devote to working on a full machine learning project lifecycle, in addition to doing the same at my job.
+excerpt: I started entering Kaggle competitions near the start of 2021. I had previously been working on a few machine learning side projects, but since starting to work full-time as an ML engineer I found that I didn’t really have the time or energy to devote to working on a full machine learning project lifecycle, in addition to doing the same at my job.
 ---
 
 # Kaggle Journey to Competitions Master
