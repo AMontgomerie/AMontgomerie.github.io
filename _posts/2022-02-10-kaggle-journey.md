@@ -9,6 +9,8 @@ excerpt: I started entering Kaggle competitions near the start of 2021. I had pr
 
 ![](/images/kaggle_profile.png)
 
+*UPDATE: I did an interview with Sanyam Bhutani about my Kaggle journey on his Chai Time Podcast on Weights & Biases [here](https://www.youtube.com/watch?v=DmMLDuob-Ak)*
+
 ## First Attempts at Competitions
 
 I started entering Kaggle competitions near the start of 2021 (about 11 months ago as of the time of writing). I had previously been working on a few machine learning side projects (which I’ve written about on this blog before), but since starting to work full-time as an ML engineer I found that I didn’t really have the time or energy to devote to working on a full machine learning project lifecycle, in addition to doing the same at my job. Despite this, I still wanted to work on some more NLP projects since my work was mostly related to dealing with tabular data and recommender systems at the time.
