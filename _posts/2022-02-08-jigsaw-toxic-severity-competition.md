@@ -7,6 +7,8 @@ excerpt: The goal of this competition was to build a system which can predict ho
 
 # Jigsaw Rate Severity of Toxic Comments 14th Place Solution
 
+*UPDATE: I did an interview with Sanyam Bhutani about my solution to this competition on his Chai Time Podcast on Weights & Biases [here](https://www.youtube.com/watch?v=DmMLDuob-Ak)*
+
 This blog is mostly a repost of a thread I posted on Kaggle about this competition. You can find the original thread [here](https://www.kaggle.com/c/jigsaw-toxic-severity-rating/discussion/306063). The source code can be found [here](https://github.com/AMontgomerie/jigsaw-toxic-severity-competition).
 
 # Competition Overview
