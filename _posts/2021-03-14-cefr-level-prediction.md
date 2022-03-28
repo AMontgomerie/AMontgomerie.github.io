@@ -7,7 +7,7 @@ excerpt: This time I wanted to see if I could predict the CEFR level of a given 
 
 # Attempting to Predict the CEFR Level of English Texts
 
-To try out the final model, check out the [Streamlit app](http://cefr-predictor.ml/). The code is available on [Github](https://github.com/AMontgomerie/CEFR-English-Level-Predictor).
+To try out the final model, check out the [Streamlit app](https://share.streamlit.io/amontgomerie/cefr-english-level-predictor/main/CEFR_Predictor.py). The code is available on [Github](https://github.com/AMontgomerie/CEFR-English-Level-Predictor).
 
 I previously wrote [a blog about automatic reading comprehension question generation](https://amontgomerie.github.io/2020/07/30/question-generator.html). This one is somewhat related, in that it’s another project about English reading comprehension. This time I wanted to see if I could predict the [CEFR level](https://en.wikipedia.org/wiki/Common_European_Framework_of_Reference_for_Languages) of a given text. This kind of system is a useful tool for teachers or self-studying students as it helps them find reading material of an appropriate difficulty level.
 
